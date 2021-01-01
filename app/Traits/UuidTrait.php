@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -23,16 +24,22 @@ trait UuidTrait
      * @param string $model
      * @param string $column
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function generateModelUuid(string $model, string $column = 'uuid'): string
     {
-        do {
-            $uuid = $this->generateUuid();
-        } while (
-            DB::table($model)->where($column, '=', $uuid)->first() instanceof DB
-        );
+        try{
+            
+            do {
+                $uuid = $this->generateUuid();
+            } while (
+                DB::table($model)->where($column, '=', $uuid)->first() instanceof DB
+            );
 
-        return $uuid;
+            return $uuid;
+            
+        }catch (Exception $exception){
+            return $exception->getMessage();
+        }
     }
 }
